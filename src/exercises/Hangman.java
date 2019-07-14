@@ -4,6 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
@@ -58,9 +59,21 @@ public class Hangman extends KeyAdapter {
 		removeBoxes();
 		lives = 9;
 		livesLabel.setText("" + lives);
-		Random random = new Random();
-		puzzle = puzzles.get(random.nextInt(puzzles.size() - 1));
-		System.out.println("Puzzle is now " + puzzle);
+		do {
+			try {
+				puzzle = puzzles.pop();
+				if (!puzzle.matches("[a-zA-Z]+")) {
+					throw new Exception("Word " + puzzle + " contains special characters!");
+				}
+			} catch (EmptyStackException es) {
+				JOptionPane.showMessageDialog(panel, "All puzzles solved!");
+				System.exit(0);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		} while (!puzzle.matches("[a-zA-Z]+"));
+
+		System.out.println("puzzle is now " + puzzle);
 		createBoxes();
 	}
 
